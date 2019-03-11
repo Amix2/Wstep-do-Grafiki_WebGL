@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+ <!-- The previous line tells the browser, that the page uses the HTML5 standard. -->
+ 
+ <html>
+     <head>
+         <title>Example 02 - colors</title>
+         <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+ 
+         <!-- The following meta line optimizes the site for mobile devices. It sets the viewport size
+       to the screen size, so it will be displayed maximized, but unscaled. -->
+         <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
+         <style type="text/css">
+             body {
+                 /* Set the background color of the HTML page to black */
+                 background-color: #000000;
+ 
+                 /* Hide oversized content. This prevents the scroll bars. */
+                 overflow: hidden;
+             }
+         </style>
+         <!-- Include two libraries
+       1. Three.js (core library)
+       2. Detector.js (checks the browsers WebGL capabilities) -->
+         <script src="three.js"></script>
+         <script src="Detector.js"></script>
+     </head>
+     <body>
+         <!-- This is the DIV element which will contain the WebGL canvas. To be identifiable lateron,
+       the id 'WebGLCanvas' is applied to it. -->
+         <div id="WebGLCanvas"> </div>
+ 
+         <!-- This JavaScript block encloses the Three.js commands -->
+         <script>
+           // Global scene object
+           var scene;
+
+           // Global camera object
+           var camera;
+
+           var rad = 10.0;
+           var step = 0.5;
+
+           // Initialize the scene
+           initializeScene();
+
+           // Render the scene (map the 3D world to the 2D scene)
+           renderScene();
+
+            function sX(a, b) {
+                return rad*Math.cos(a)*Math.cos(b);
+            }
+            function sY(a, b) {
+                return rad*Math.sin(b);
+            }
+            function sZ(a, b) {
+                return rad*Math.sin(a)*Math.cos(b);
+            }
+
+            function getAllNeigbours(pa, pb) {
+                var out = new List;
+                if(pa-step >= -Math.PI)
+                out.push((pa-step, pb-step));
+                return out;
+            }
+            
+            function getPoints() {
+                var out = new Array;
+                for(var a=-Math.PI; a<Math.PI; a+=step) {
+                    for(var b=-Math.PI/2; b<=Math.PI; b+=step) {
+                        out.push([sX(a,b), sY(a,b), sZ(a,b)]);
+                    }
+                }
+                return out;
+            }
+
+            function findClosePoints(px, py, pz) {
+                
+            }
+           function initializeScene(){
+            if(Detector.webgl){
+                renderer = new THREE.WebGLRenderer({antialias:true});
+
+               } else {
+                   renderer = new THREE.CanvasRenderer();
+               }
+
+               renderer.setClearColor(0x000000, 1);
+
+               canvasWidth = window.innerWidth;
+               canvasHeight = window.innerHeight;
+
+               renderer.setSize(canvasWidth, canvasHeight);
+
+               document.getElementById("WebGLCanvas").appendChild(renderer.domElement);
+
+
+               scene = new THREE.Scene();
+
+               camera = new THREE.PerspectiveCamera(45, canvasWidth / canvasHeight, 1, 100);
+               camera.position.set(0, 0, 10);
+               camera.lookAt(scene.position);
+               scene.add(camera);
+
+               var triangleGeometry = new THREE.Geometry();
+               triangleGeometry.vertices.push(new THREE.Vector3( 0.0,  1.0, 0.0));
+               triangleGeometry.vertices.push(new THREE.Vector3(-1.0, -1.0, 0.0));
+               triangleGeometry.vertices.push(new THREE.Vector3( 1.0, -1.0, 0.0));
+               triangleGeometry.faces.push(new THREE.Face3(0, 1, 2));
+
+               triangleGeometry.faces[0].vertexColors[0] = new THREE.Color(0xFF0000);
+               triangleGeometry.faces[0].vertexColors[1] = new THREE.Color(0x00FF00);
+               triangleGeometry.faces[0].vertexColors[2] = new THREE.Color(0x0000FF);
+
+               var triangleMaterial = new THREE.MeshBasicMaterial({
+                   vertexColors:THREE.VertexColors,
+                   side:THREE.DoubleSide
+               });
+
+               var triangleMesh = new THREE.Mesh(triangleGeometry, triangleMaterial);
+               triangleMesh.position.set(-1.5, 0.0, 4.0);
+               triangleMesh.rotation.y += 0.1;
+               scene.add(triangleMesh);
+            
+            console.log(getPoints());
+           }
+
+           function renderScene(){
+               renderer.render(scene, camera);
+           }
+       </script>
+
+<script>
+    /*================Creating a canvas=================*/
+    var canvas = document.getElementById('my_Canvas');
+    gl = canvas.getContext('experimental-webgl'); 
+
+    /*==========Defining and storing the geometry=======*/
+
+    var vertices = [
+       -0.5,0.5,0.0,
+       0.0,0.5,0.0,
+       -0.25,0.25,0.0, 
+    ];
+
+    // Create an empty buffer object to store the vertex buffer
+    var vertex_buffer = gl.createBuffer();
+
+    //Bind appropriate array buffer to it
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
+
+    // Pass the vertex data to the buffer
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+    // Unbind the buffer
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+   
+
+    /*======== Associating shaders to buffer objects ========*/
+
+    // Bind vertex buffer object
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
+
+    // Get the attribute location
+    var coord = gl.getAttribLocation(shaderProgram, "coordinates");
+
+    // Point an attribute to the currently bound VBO
+    gl.vertexAttribPointer(coord, 3, gl.FLOAT, false, 0, 0);
+
+    // Enable the attribute
+    gl.enableVertexAttribArray(coord);
+
+    /*============= Drawing the primitive ===============*/
+
+    // Clear the canvas
+    gl.clearColor(0.5, 0.5, 0.5, 0.9);
+
+    // Enable the depth test
+    gl.enable(gl.DEPTH_TEST);
+
+    // Clear the color buffer bit
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    // Set the view port
+    gl.viewport(0,0,canvas.width,canvas.height);
+
+    // Draw the triangle
+    gl.drawArrays(gl.POINTS, 0, 3);
+ </script>
+     </body>
+</html>
