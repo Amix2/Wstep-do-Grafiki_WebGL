@@ -4,6 +4,7 @@ and renders the positions of the particles
  */
 
 class WaterEngine {
+  xd = [];
   constructor(fluid){
     this.scene = null;
     this.camera = null; 
@@ -11,10 +12,24 @@ class WaterEngine {
     this.renderEnable = true;
     this.meshes = [];
     this.fluid = fluid;
+    this.list = [];
     
     // Set up all ThreeJS stuff
     this.setup();
     this.initScene();
+    // var num_threads = 1;
+    //   var MT = new Multithread(num_threads);
+    //   var funcInADifferentThread = MT.process(
+    //     function(a) { return a;
+    //     },  
+    //     function(r) { console.log("=================="+r);
+    //     WaterEngine.xd.push("q");
+    //       console.log(WaterEngine.xd) }  
+    //   );
+    //   funcInADifferentThread("s")
+    //   funcInADifferentThread("w")
+    //   funcInADifferentThread("e")
+    //   funcInADifferentThread("r")  
   }
 
   clear() {
@@ -53,6 +68,9 @@ class WaterEngine {
       mesh.position.set(particle.position.x, particle.position.y, particle.position.z);
       this.meshes.push(mesh);
       this.scene.add(mesh);
+
+      
+
     }
   }
 
