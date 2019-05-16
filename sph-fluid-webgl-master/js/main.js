@@ -38,7 +38,7 @@ gui.add(restart,'restart');
     engine.initScene();
   });
 
-  //document.addEventListener("mousedown", () => fluid.fireParticles());
-  //document.addEventListener("mouseup", () => fluid.fireParticles());
+  document.addEventListener("mousedown", () => fluid.fireParticles());
+  document.addEventListener("mouseup", () => fluid.fireParticles());
 };
 
